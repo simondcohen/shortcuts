@@ -14,16 +14,21 @@ interface ShortcutsContextType {
   hasCopied: boolean;
   copiedItemId: string | null;
   getFolderOptions: (currentFolderId?: string) => ReturnType<typeof getFolderOptions>;
+  importItems: (items: Item[]) => void;
 }
 
 const ShortcutsContext = createContext<ShortcutsContextType | undefined>(undefined);
 
 export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { items, addItem, updateItem, deleteItem, toggleFolder } = useLocalStorage();
+  const { items, addItem, updateItem, deleteItem, toggleFolder, importItems: importToStorage } = useLocalStorage();
   const { hasCopied, itemId: copiedItemId, copyToClipboard } = useClipboard();
 
   const getOptions = (currentFolderId?: string) => {
     return getFolderOptions(items, currentFolderId);
+  };
+
+  const importItems = (newItems: Item[]) => {
+    importToStorage(newItems);
   };
 
   return (
@@ -38,6 +43,7 @@ export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children 
         hasCopied,
         copiedItemId,
         getFolderOptions: getOptions,
+        importItems,
       }}
     >
       {children}

@@ -62,37 +62,54 @@ export const useLocalStorage = () => {
     });
   };
 
-  // Toggle folder open/closed
-  const toggleFolder = (folderId: string) => {
+  // Delete an item and all its children
+  const deleteItem = (itemId: string) => {
     setItems(prevItems => {
-      return prevItems.map(item => {
-        if (item.id === folderId && item.type === 'folder') {
-          return { ...item, isOpen: !(item as Folder).isOpen };
-        }
-        return item;
-      });
+      const childIds = getAllChildIds(prevItems, itemId);
+      return prevItems.filter(item => item.id !== itemId && !childIds.includes(item.id));
     });
   };
 
-  // Delete an item and all its children (if it's a folder)
-  const deleteItem = (itemId: string) => {
-    setItems(prevItems => {
-      const itemToDelete = prevItems.find(item => item.id === itemId);
-      
-      if (!itemToDelete) {
-        return prevItems;
+  // Toggle folder open/closed state
+  const toggleFolder = (folderId: string) => {
+    setItems(prevItems =>
+      prevItems.map(item =>
+        item.id === folderId && item.type === 'folder'
+          ? { ...item, isOpen: !item.isOpen }
+          : item
+      )
+    );
+  };
+
+  // Import multiple items
+  const importItems = (newItems: Item[]) => {
+    // Add IDs and timestamps to imported items
+    const processedItems = newItems.map(item => {
+      const baseItem = {
+        ...item,
+        id: generateId(),
+        createdAt: Date.now(),
+      };
+
+      // Ensure folder items have isOpen property
+      if (item.type === 'folder') {
+        return {
+          ...baseItem,
+          isOpen: (item as Folder).isOpen ?? true,
+        };
       }
-      
-      let idsToRemove = [itemId];
-      
-      // If it's a folder, also remove all its children
-      if (itemToDelete.type === 'folder') {
-        const childIds = getAllChildIds(prevItems, itemId);
-        idsToRemove = [...idsToRemove, ...childIds];
-      }
-      
-      return prevItems.filter(item => !idsToRemove.includes(item.id));
+
+      return baseItem;
     });
+
+    // Validate folder structure
+    processedItems.forEach(item => {
+      if (item.type === 'folder' && wouldCreateLoop(processedItems, item.id, item.parentId)) {
+        throw new Error(`Import would create a folder loop with folder "${item.title}"`);
+      }
+    });
+
+    setItems(prevItems => [...prevItems, ...processedItems]);
   };
 
   return {
@@ -101,5 +118,6 @@ export const useLocalStorage = () => {
     updateItem,
     deleteItem,
     toggleFolder,
+    importItems,
   };
 };

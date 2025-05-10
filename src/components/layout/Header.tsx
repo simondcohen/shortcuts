@@ -1,12 +1,18 @@
-import React from 'react';
-import { Bookmark } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bookmark, Upload } from 'lucide-react';
 import Button from '../common/Button';
+import { ItemType } from '../../types';
+import ImportModal from '../modals/ImportModal';
+import { useShortcuts } from '../../context/ShortcutsContext';
 
 interface HeaderProps {
-  onAddItem: (type: 'link' | 'snippet' | 'folder') => void;
+  onAddItem: (type: ItemType) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
+  const [showImportModal, setShowImportModal] = useState(false);
+  const { importItems } = useShortcuts();
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -17,6 +23,14 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
         
         <div className="flex space-x-2">
           <div className="hidden sm:flex space-x-2">
+            <Button
+              onClick={() => setShowImportModal(true)}
+              variant="outline"
+              size="sm"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Import
+            </Button>
             <Button
               onClick={() => onAddItem('link')}
               variant="primary"
@@ -41,33 +55,24 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
           </div>
           
           {/* Mobile dropdown */}
-          <div className="sm:hidden relative group">
-            <Button variant="primary" size="sm">
-              Add New +
+          <div className="sm:hidden">
+            <Button
+              onClick={() => setShowImportModal(true)}
+              variant="outline"
+              size="sm"
+            >
+              <Upload className="h-4 w-4" />
             </Button>
-            <div className="absolute right-0 top-full mt-1 bg-white shadow-lg rounded-md py-2 hidden group-hover:block w-40">
-              <button
-                onClick={() => onAddItem('link')}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Add Link
-              </button>
-              <button
-                onClick={() => onAddItem('snippet')}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Add Snippet
-              </button>
-              <button
-                onClick={() => onAddItem('folder')}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Add Folder
-              </button>
-            </div>
           </div>
         </div>
       </div>
+
+      {showImportModal && (
+        <ImportModal
+          onClose={() => setShowImportModal(false)}
+          onImport={importItems}
+        />
+      )}
     </header>
   );
 };
