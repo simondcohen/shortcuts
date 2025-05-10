@@ -28,20 +28,23 @@ const MainContent: React.FC<MainContentProps> = ({ showFormType, onCloseForm }) 
   };
 
   return (
-    <main className="container mx-auto flex-grow">
+    <main className="flex-grow bg-gray-50">
       {/* Render form modal if add or edit is active */}
       {(showFormType || editItem) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <ItemForm 
-            type={editItem?.type || showFormType!} 
-            onClose={handleCloseForm}
-            editItem={editItem}
-          />
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all animate-fadeIn">
+            <ItemForm 
+              type={editItem?.type || showFormType!} 
+              onClose={handleCloseForm}
+              editItem={editItem}
+            />
+          </div>
         </div>
       )}
       
-      {/* Root level items */}
-      <div className="mt-4">
+      {/* Main content container */}
+      <div className="container mx-auto px-4 py-6 max-w-screen-xl">
+        {/* Root level items */}
         <FolderList
           parentId={null}
           items={items}
