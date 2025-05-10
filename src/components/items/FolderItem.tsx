@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Folder as FolderIcon, Edit, Trash } from 'lucide-react';
+import { ChevronDown, ChevronRight, Folder as FolderIcon, Edit, Trash, Plus } from 'lucide-react';
 import Button from '../common/Button';
-import { Folder } from '../../types';
+import { Folder, ItemType } from '../../types';
 import { useShortcuts } from '../../context/ShortcutsContext';
 import ConfirmDialog from '../common/ConfirmDialog';
 
@@ -9,12 +9,14 @@ interface FolderItemProps {
   folder: Folder;
   onEdit: (item: Folder) => void;
   level?: number;
+  onAddItem?: (type: ItemType, parentId: string) => void;
 }
 
-const FolderItem: React.FC<FolderItemProps> = ({ folder, onEdit, level = 0 }) => {
+const FolderItem: React.FC<FolderItemProps> = ({ folder, onEdit, level = 0, onAddItem }) => {
   const { toggleFolder, deleteItem } = useShortcuts();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showAddOptions, setShowAddOptions] = useState(false);
 
   const handleToggleFolder = () => {
     toggleFolder(folder.id);
@@ -29,13 +31,28 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, onEdit, level = 0 }) =>
     paddingLeft: `${level * 16 + 8}px`,
   };
 
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowAddOptions(!showAddOptions);
+  };
+
+  const handleAddItemType = (type: ItemType) => {
+    if (onAddItem) {
+      onAddItem(type, folder.id);
+      setShowAddOptions(false);
+    }
+  };
+
   return (
     <>
       <div 
         className="relative group" 
         style={indentStyle}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          if (!isHovered) setShowAddOptions(false);
+        }}
       >
         <div 
           className={`
@@ -65,6 +82,39 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, onEdit, level = 0 }) =>
           </span>
           
           <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="relative">
+              <button
+                onClick={handleAddClick}
+                aria-label="Add item to folder"
+                className="p-1 text-gray-400 hover:text-gray-700 focus:outline-none mr-1.5"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+              
+              {showAddOptions && (
+                <div className="absolute right-0 mt-1 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                  <ul className="py-1">
+                    <li>
+                      <button
+                        onClick={() => handleAddItemType('link')}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Add Link
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => handleAddItemType('snippet')}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Add Snippet
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+            
             <button
               onClick={() => onEdit(folder)}
               aria-label="Edit folder"

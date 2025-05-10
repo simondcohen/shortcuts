@@ -8,15 +8,16 @@ interface ItemFormProps {
   type: ItemType;
   onClose: () => void;
   editItem?: Item;
+  parentId?: string | null;
 }
 
-const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem }) => {
+const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: initialParentId }) => {
   const { addItem, updateItem, getFolderOptions } = useShortcuts();
   
   const [title, setTitle] = useState(editItem?.title || '');
   const [url, setUrl] = useState((editItem?.type === 'link' ? editItem.url : ''));
   const [content, setContent] = useState((editItem?.type === 'snippet' ? editItem.content : ''));
-  const [parentId, setParentId] = useState<string | null>(editItem?.parentId || null);
+  const [parentId, setParentId] = useState<string | null>(editItem?.parentId || initialParentId || null);
   const [error, setError] = useState<string | null>(null);
   
   const folderOptions = getFolderOptions(editItem?.id);
@@ -30,8 +31,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem }) => {
         setContent(editItem.content);
       }
       setParentId(editItem.parentId);
+    } else if (initialParentId) {
+      setParentId(initialParentId);
     }
-  }, [editItem]);
+  }, [editItem, initialParentId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

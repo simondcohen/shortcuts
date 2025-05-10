@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import FolderItem from '../items/FolderItem';
-import { Item, Folder } from '../../types';
+import { Item, Folder, ItemType } from '../../types';
 import { useShortcuts } from '../../context/ShortcutsContext';
 
 interface FolderListProps {
@@ -9,6 +9,7 @@ interface FolderListProps {
   onEdit: (item: Item) => void;
   level?: number;
   renderItems: (items: Item[]) => ReactNode;
+  onAddItem: (type: ItemType, parentId: string) => void;
 }
 
 const FolderList: React.FC<FolderListProps> = ({ 
@@ -16,7 +17,8 @@ const FolderList: React.FC<FolderListProps> = ({
   items, 
   onEdit, 
   level = 0,
-  renderItems
+  renderItems,
+  onAddItem
 }) => {
   const { items: allItems } = useShortcuts();
   
@@ -65,6 +67,7 @@ const FolderList: React.FC<FolderListProps> = ({
                   folder={folder as Folder}
                   onEdit={onEdit}
                   level={level}
+                  onAddItem={onAddItem}
                 />
                 
                 {/* Recursively render folder contents if open */}
@@ -76,6 +79,7 @@ const FolderList: React.FC<FolderListProps> = ({
                       onEdit={onEdit}
                       level={level + 1}
                       renderItems={renderItems}
+                      onAddItem={onAddItem}
                     />
                   </div>
                 )}
