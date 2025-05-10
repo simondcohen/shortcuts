@@ -83,33 +83,97 @@ export const useLocalStorage = () => {
 
   // Import multiple items
   const importItems = (newItems: Item[]) => {
-    // Add IDs and timestamps to imported items
-    const processedItems = newItems.map(item => {
-      const baseItem = {
-        ...item,
-        id: generateId(),
-        createdAt: Date.now(),
-      };
+    const existingIds = new Set(items.map(item => item.id));
+    const idMap = new Map<string, string>(); // Map to track ID changes
+    const processedItems: Item[] = [];
 
-      // Ensure folder items have isOpen property
-      if (item.type === 'folder') {
-        return {
-          ...baseItem,
-          isOpen: (item as Folder).isOpen ?? true,
-        };
+    // First pass: Process items and keep IDs when possible
+    for (const raw of newItems) {
+      const originalId = raw.id;
+      const needsNewId = !originalId || existingIds.has(originalId);
+      const newId = needsNewId ? generateId() : originalId;
+      
+      // Track ID changes
+      if (needsNewId) {
+        idMap.set(originalId, newId);
       }
 
-      return baseItem;
-    });
+      // Process based on item type
+      if (raw.type === 'folder') {
+        const item = { ...raw } as any;
+        
+        // Ensure folders always have isOpen property
+        if (item.isOpen === undefined) {
+          item.isOpen = true;  // default for imported folders
+        }
+        
+        processedItems.push({
+          ...item,
+          id: newId,
+          createdAt: item.createdAt || Date.now(),
+        } as Folder);
+      } else if (raw.type === 'link') {
+        processedItems.push({
+          ...raw,
+          id: newId,
+          createdAt: raw.createdAt || Date.now(),
+        } as Link);
+      } else if (raw.type === 'snippet') {
+        processedItems.push({
+          ...raw,
+          id: newId,
+          createdAt: raw.createdAt || Date.now(),
+        } as Snippet);
+      }
+    }
+
+    // Second pass: Update parentIds if the parent's ID was changed
+    const finalItems: Item[] = [];
+    for (const item of processedItems) {
+      if (item.parentId && idMap.has(item.parentId)) {
+        const newParentId = idMap.get(item.parentId)!;
+        
+        if (item.type === 'folder') {
+          finalItems.push({
+            ...item,
+            parentId: newParentId
+          } as Folder);
+        } else if (item.type === 'link') {
+          finalItems.push({
+            ...item,
+            parentId: newParentId
+          } as Link);
+        } else if (item.type === 'snippet') {
+          finalItems.push({
+            ...item,
+            parentId: newParentId
+          } as Snippet);
+        }
+      } else {
+        finalItems.push(item);
+      }
+    }
 
     // Validate folder structure
-    processedItems.forEach(item => {
-      if (item.type === 'folder' && wouldCreateLoop(processedItems, item.id, item.parentId)) {
+    finalItems.forEach(item => {
+      if (item.type === 'folder' && wouldCreateLoop(finalItems, item.id, item.parentId)) {
         throw new Error(`Import would create a folder loop with folder "${item.title}"`);
       }
     });
 
-    setItems(prevItems => [...prevItems, ...processedItems]);
+    // For testing/debug purposes
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      const folder = finalItems.find(item => item.type === 'folder');
+      if (folder) {
+        const children = finalItems.filter(item => item.parentId === folder.id);
+        console.log('Import test - Folder:', folder);
+        console.log('Import test - Children:', children);
+      }
+    }
+
+    setItems(prevItems => [...prevItems, ...finalItems]);
+    
+    return { importedItems: finalItems, idMap };
   };
 
   return {
