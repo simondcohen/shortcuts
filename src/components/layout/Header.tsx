@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Bookmark, Upload, Plus, Menu, X } from 'lucide-react';
+import { Bookmark, Upload, Plus, Menu, X, Download } from 'lucide-react';
 import Button from '../common/Button';
 import { ItemType } from '../../types';
 import ImportModal from '../modals/ImportModal';
+import ExportModal from '../modals/ExportModal';
 import { useShortcuts } from '../../context/ShortcutsContext';
 
 interface HeaderProps {
@@ -11,8 +12,9 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { importItems } = useShortcuts();
+  const { importItems, items } = useShortcuts();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -38,6 +40,15 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
           >
             <Upload className="h-4 w-4 mr-2" />
             Import
+          </Button>
+          <Button
+            onClick={() => setShowExportModal(true)}
+            variant="outline"
+            size="sm"
+            className="text-gray-700 hover:bg-gray-100"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export
           </Button>
           <Button
             onClick={() => onAddItem('link')}
@@ -136,6 +147,18 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
               <Upload className="h-4 w-4 mr-2" />
               Import
             </Button>
+            <Button
+              onClick={() => {
+                setShowExportModal(true);
+                setMobileMenuOpen(false);
+              }}
+              variant="outline"
+              size="sm"
+              className="text-gray-700 hover:bg-gray-100 w-full justify-start"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
           </div>
         </div>
       )}
@@ -144,6 +167,13 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
         <ImportModal
           onClose={() => setShowImportModal(false)}
           onImport={importItems}
+        />
+      )}
+
+      {showExportModal && (
+        <ExportModal
+          items={items}
+          onClose={() => setShowExportModal(false)}
         />
       )}
     </header>
