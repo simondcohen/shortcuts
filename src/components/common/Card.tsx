@@ -17,7 +17,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div 
-      className={`bg-white rounded-lg border border-gray-200 shadow-sm p-4 transition-all duration-200 hover:shadow-md ${className}`}
+      className={`relative bg-white rounded-md border p-3 transition-all duration-150 ${className}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

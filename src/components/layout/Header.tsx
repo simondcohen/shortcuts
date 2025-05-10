@@ -21,61 +21,61 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="bg-white sticky top-0 z-10 shadow-sm">
+      <div className="container mx-auto px-3 py-2 flex justify-between items-center">
         <div className="flex items-center">
-          <div className="bg-blue-600 text-white p-2 rounded-md mr-3 shadow-sm">
-            <Bookmark className="h-5 w-5" />
+          <div className="bg-blue-500 text-white p-1.5 rounded mr-2">
+            <Bookmark className="h-4 w-4" />
           </div>
-          <h1 className="text-xl font-bold text-gray-800">Shortcuts</h1>
+          <h1 className="text-lg font-semibold text-gray-800">Shortcuts</h1>
         </div>
         
         {/* Desktop navigation */}
-        <div className="hidden md:flex space-x-3">
+        <div className="hidden md:flex space-x-2">
           <Button
             onClick={() => setShowImportModal(true)}
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="text-gray-700 hover:bg-gray-100"
+            className="text-gray-600"
           >
-            <Upload className="h-4 w-4 mr-2" />
+            <Upload className="h-4 w-4 mr-1" />
             Import
           </Button>
           <Button
             onClick={() => setShowExportModal(true)}
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="text-gray-700 hover:bg-gray-100"
+            className="text-gray-600"
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 mr-1" />
             Export
           </Button>
           <Button
             onClick={() => onAddItem('link')}
             variant="primary"
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-slate-700 hover:bg-slate-800"
           >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Link
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            Link
           </Button>
           <Button
             onClick={() => onAddItem('snippet')}
             variant="secondary"
             size="sm"
-            className="bg-purple-600 text-white hover:bg-purple-700"
+            className="bg-teal-600 text-white hover:bg-teal-700"
           >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Snippet
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            Snippet
           </Button>
           <Button
             onClick={() => onAddItem('folder')}
             variant="outline"
             size="sm"
-            className="text-gray-700 hover:bg-gray-100"
+            className="text-gray-600 hover:bg-gray-50"
           >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Folder
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            Folder
           </Button>
         </div>
         
@@ -88,8 +88,8 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
             className="p-1"
           >
             {mobileMenuOpen ? 
-              <X className="h-6 w-6 text-gray-700" /> : 
-              <Menu className="h-6 w-6 text-gray-700" />
+              <X className="h-5 w-5 text-gray-700" /> : 
+              <Menu className="h-5 w-5 text-gray-700" />
             }
           </Button>
         </div>
@@ -97,8 +97,8 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
 
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-md animate-fadeIn">
-          <div className="container mx-auto p-4 space-y-3">
+        <div className="md:hidden bg-white border-t border-gray-50 shadow-sm animate-fadeIn">
+          <div className="container mx-auto p-2 space-y-2">
             <Button
               onClick={() => {
                 onAddItem('link');
@@ -106,9 +106,9 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
               }}
               variant="primary"
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 w-full justify-start"
+              className="bg-slate-700 hover:bg-slate-800 w-full justify-start"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3.5 w-3.5 mr-2" />
               Add Link
             </Button>
             <Button
@@ -118,9 +118,9 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
               }}
               variant="secondary"
               size="sm"
-              className="bg-purple-600 text-white hover:bg-purple-700 w-full justify-start"
+              className="bg-teal-600 text-white hover:bg-teal-700 w-full justify-start"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3.5 w-3.5 mr-2" />
               Add Snippet
             </Button>
             <Button
@@ -130,35 +130,37 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
               }}
               variant="outline"
               size="sm"
-              className="text-gray-700 hover:bg-gray-100 w-full justify-start"
+              className="text-gray-600 hover:bg-gray-50 w-full justify-start"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3.5 w-3.5 mr-2" />
               Add Folder
             </Button>
-            <Button
-              onClick={() => {
-                setShowImportModal(true);
-                setMobileMenuOpen(false);
-              }}
-              variant="outline"
-              size="sm"
-              className="text-gray-700 hover:bg-gray-100 w-full justify-start"
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </Button>
-            <Button
-              onClick={() => {
-                setShowExportModal(true);
-                setMobileMenuOpen(false);
-              }}
-              variant="outline"
-              size="sm"
-              className="text-gray-700 hover:bg-gray-100 w-full justify-start"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+            <div className="flex space-x-2 pt-1">
+              <Button
+                onClick={() => {
+                  setShowImportModal(true);
+                  setMobileMenuOpen(false);
+                }}
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 flex-1"
+              >
+                <Upload className="h-3.5 w-3.5 mr-1" />
+                Import
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowExportModal(true);
+                  setMobileMenuOpen(false);
+                }}
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 flex-1"
+              >
+                <Download className="h-3.5 w-3.5 mr-1" />
+                Export
+              </Button>
+            </div>
           </div>
         </div>
       )}

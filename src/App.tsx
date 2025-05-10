@@ -17,12 +17,12 @@ function App() {
 
   return (
     <ShortcutsProvider>
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Header onAddItem={handleAddItem} />
         <MainContent showFormType={showFormType} onCloseForm={handleCloseForm} />
-        <footer className="bg-white border-t border-gray-200 py-3 text-center text-sm text-gray-500">
+        <footer className="py-3 text-center text-xs text-gray-400 border-t border-gray-100">
           <div className="container mx-auto px-4">
-            Shortcuts App – Save and organize your links and snippets
+            Shortcuts App
           </div>
         </footer>
       </div>

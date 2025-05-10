@@ -14,7 +14,6 @@ interface LinkCardProps {
 const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit }) => {
   const { deleteItem } = useShortcuts();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleOpen = () => {
     window.open(link.url, '_blank', 'noopener,noreferrer');
@@ -50,53 +49,28 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit }) => {
 
   return (
     <>
-      <Card 
-        className={`relative group transform transition-all duration-200 ${isHovered ? 'scale-102 shadow-md' : ''} hover:border-blue-300`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
+      <Card className="group hover:shadow-sm transition-all duration-200 border-gray-100">
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
             onClick={() => onEdit(link)}
             aria-label="Edit"
-            className="bg-gray-100 hover:bg-gray-200 rounded-full p-1"
+            className="p-1 text-gray-400 hover:text-gray-700 focus:outline-none"
           >
-            <Edit className="h-4 w-4 text-gray-600" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+            <Edit className="h-3 w-3" />
+          </button>
+          <button
             onClick={() => setIsDeleteDialogOpen(true)}
             aria-label="Delete"
-            className="bg-gray-100 hover:bg-gray-200 hover:bg-red-100 hover:text-red-600 rounded-full p-1"
+            className="p-1 ml-1 text-gray-400 hover:text-red-500 focus:outline-none"
           >
-            <Trash className="h-4 w-4 text-gray-600 hover:text-red-600" />
-          </Button>
+            <Trash className="h-3 w-3" />
+          </button>
         </div>
         
         <div className="flex items-start">
-          <div className="bg-gray-100 rounded-lg p-2 mr-3 flex-shrink-0">
-            {faviconUrl ? (
-              <img 
-                src={faviconUrl} 
-                alt="Website favicon" 
-                className="w-8 h-8 rounded-md" 
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  document.getElementById(`fallback-icon-${link.id}`)?.style.setProperty('display', 'block');
-                }}
-              />
-            ) : (
-              <Globe className="h-8 w-8 text-blue-500" id={`fallback-icon-${link.id}`} />
-            )}
-          </div>
-          
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-800 truncate text-base">{link.title}</h3>
-            <div className="text-xs text-gray-500 mt-1 truncate flex items-center" title={link.url}>
-              <Globe className="h-3 w-3 text-gray-400 mr-1 inline" />
+            <h3 className="font-medium text-gray-600 truncate text-base">{link.title}</h3>
+            <div className="text-xs text-gray-400 mt-0.5 truncate" title={link.url}>
               {domain}
             </div>
           </div>
@@ -106,11 +80,11 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit }) => {
           variant="primary"
           size="sm"
           onClick={handleOpen}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 transition-colors"
+          className="mt-3 bg-slate-700 hover:bg-slate-800 text-xs"
           fullWidth
         >
-          <ExternalLink className="h-4 w-4 mr-1" />
-          Open Link
+          <ExternalLink className="h-3 w-3 mr-1" />
+          Open
         </Button>
       </Card>
 
