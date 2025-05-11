@@ -17,6 +17,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
   const [title, setTitle] = useState(editItem?.title || '');
   const [url, setUrl] = useState((editItem?.type === 'link' ? editItem.url : ''));
   const [content, setContent] = useState((editItem?.type === 'snippet' ? editItem.content : ''));
+  const [snippetUrl, setSnippetUrl] = useState((editItem?.type === 'snippet' && 'url' in editItem) ? editItem.url || '' : '');
   const [parentId, setParentId] = useState<string | null>(editItem?.parentId || initialParentId || null);
   const [error, setError] = useState<string | null>(null);
   
@@ -29,6 +30,9 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
         setUrl(editItem.url);
       } else if (editItem.type === 'snippet') {
         setContent(editItem.content);
+        if ('url' in editItem) {
+          setSnippetUrl(editItem.url || '');
+        }
       }
       setParentId(editItem.parentId);
     } else if (initialParentId) {
@@ -61,7 +65,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
         type,
         parentId,
         ...(type === 'link' ? { url: url.trim() } : {}),
-        ...(type === 'snippet' ? { content: content.trim() } : {}),
+        ...(type === 'snippet' ? { 
+          content: content.trim(),
+          ...(snippetUrl.trim() ? { url: snippetUrl.trim() } : {})
+        } : {}),
         ...(type === 'folder' ? { isOpen: true } : {}),
       };
       
@@ -102,7 +109,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-lg max-w-md w-full mx-auto">
+    <div className="p-4 bg-white rounded-lg shadow-lg max-w-2xl w-full mx-auto">
       <div className="flex items-center mb-4">
         <span className="mr-2 text-blue-500">{getIcon()}</span>
         <h2 className="text-xl font-semibold">{getTitle()}</h2>
@@ -146,19 +153,34 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
         )}
         
         {type === 'snippet' && (
-          <div className="mb-4">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-              Content
-            </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={5}
-              placeholder="Enter your snippet text"
-            />
-          </div>
+          <>
+            <div className="mb-4">
+              <label htmlFor="snippetUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                URL (optional)
+              </label>
+              <input
+                type="text"
+                id="snippetUrl"
+                value={snippetUrl}
+                onChange={(e) => setSnippetUrl(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                Content
+              </label>
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={15}
+                placeholder="Enter your snippet text"
+              />
+            </div>
+          </>
         )}
         
         <div className="mb-4">

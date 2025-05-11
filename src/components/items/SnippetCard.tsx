@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Code, Copy, Check, Edit, Trash, ChevronDown, ChevronUp } from 'lucide-react';
+import { Code, Copy, Check, Edit, Trash, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { Snippet } from '../../types';
@@ -36,6 +36,12 @@ const SnippetCard: React.FC<SnippetCardProps> = ({ snippet, onEdit }) => {
     ? `${snippet.content.substring(0, 80)}...`
     : snippet.content;
 
+  const openLink = () => {
+    if (snippet.url) {
+      window.open(snippet.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
     <>
       <Card className="group hover:shadow-sm transition-all duration-200 border-gray-100">
@@ -59,6 +65,9 @@ const SnippetCard: React.FC<SnippetCardProps> = ({ snippet, onEdit }) => {
         <div className="flex items-start">
           <div className="flex-1 min-w-0">
             <h3 className="font-medium text-gray-600 truncate text-base">{snippet.title}</h3>
+            {snippet.url && (
+              <p className="text-xs text-gray-400 truncate">{snippet.url}</p>
+            )}
           </div>
         </div>
         
@@ -92,6 +101,19 @@ const SnippetCard: React.FC<SnippetCardProps> = ({ snippet, onEdit }) => {
           {isCopied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
           {isCopied ? 'Copied' : 'Copy'}
         </Button>
+        
+        {snippet.url && (
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={openLink}
+            className="mt-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors text-xs"
+            fullWidth
+          >
+            <ExternalLink className="h-3 w-3 mr-1" />
+            Open Link
+          </Button>
+        )}
       </Card>
 
       <ConfirmDialog

@@ -16,6 +16,7 @@ export interface Link extends BaseItem {
 export interface Snippet extends BaseItem {
   type: 'snippet';
   content: string;
+  url?: string;  // Optional URL for the snippet
 }
 
 export interface Folder extends BaseItem {
