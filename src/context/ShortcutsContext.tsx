@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useClipboard } from '../hooks/useClipboard';
 import { Item, ItemType } from '../types';
@@ -15,6 +15,10 @@ interface ShortcutsContextType {
   copiedItemId: string | null;
   getFolderOptions: (currentFolderId?: string) => ReturnType<typeof getFolderOptions>;
   importItems: (items: Item[]) => void;
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  searchResults: Item[];
+  isSearching: boolean;
 }
 
 const ShortcutsContext = createContext<ShortcutsContextType | undefined>(undefined);
@@ -22,6 +26,7 @@ const ShortcutsContext = createContext<ShortcutsContextType | undefined>(undefin
 export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { items, addItem, updateItem, deleteItem, toggleFolder, importItems: importToStorage } = useLocalStorage();
   const { hasCopied, itemId: copiedItemId, copyToClipboard } = useClipboard();
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const getOptions = (currentFolderId?: string) => {
     return getFolderOptions(items, currentFolderId);
@@ -30,6 +35,15 @@ export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children 
   const importItems = (newItems: Item[]) => {
     importToStorage(newItems);
   };
+
+  // Filter items based on search term
+  const searchResults = searchTerm.trim() === '' 
+    ? [] 
+    : items.filter(item => 
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+  const isSearching = searchTerm.trim() !== '';
 
   return (
     <ShortcutsContext.Provider
@@ -44,6 +58,10 @@ export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children 
         copiedItemId,
         getFolderOptions: getOptions,
         importItems,
+        searchTerm,
+        setSearchTerm,
+        searchResults,
+        isSearching,
       }}
     >
       {children}

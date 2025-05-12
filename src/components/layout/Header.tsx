@@ -5,6 +5,7 @@ import { ItemType } from '../../types';
 import ImportModal from '../modals/ImportModal';
 import ExportModal from '../modals/ExportModal';
 import { useShortcuts } from '../../context/ShortcutsContext';
+import SearchBar from '../common/SearchBar';
 
 interface HeaderProps {
   onAddItem: (type: ItemType) => void;
@@ -14,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { importItems, items } = useShortcuts();
+  const { importItems, items, searchTerm, setSearchTerm } = useShortcuts();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -93,6 +94,15 @@ const Header: React.FC<HeaderProps> = ({ onAddItem }) => {
             }
           </Button>
         </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="container mx-auto px-3 pb-2">
+        <SearchBar 
+          searchTerm={searchTerm} 
+          onSearchChange={setSearchTerm} 
+          placeholder="Search shortcuts by title..."
+        />
       </div>
 
       {/* Mobile menu dropdown */}

@@ -11,7 +11,7 @@ interface MainContentProps {
 }
 
 const MainContent: React.FC<MainContentProps> = ({ showFormType, onCloseForm }) => {
-  const { items } = useShortcuts();
+  const { items, searchResults, isSearching } = useShortcuts();
   const [editItem, setEditItem] = useState<Item | undefined>(undefined);
   const [formParentId, setFormParentId] = useState<string | null>(null);
   const [activeFormType, setActiveFormType] = useState<ItemType | null>(showFormType);
@@ -64,14 +64,25 @@ const MainContent: React.FC<MainContentProps> = ({ showFormType, onCloseForm }) 
       
       {/* Main content container */}
       <div className="container mx-auto px-3 py-4 max-w-screen-xl">
-        {/* Root level items */}
-        <FolderList
-          parentId={null}
-          items={items}
-          onEdit={handleEdit}
-          renderItems={renderItems}
-          onAddItem={handleAddItem}
-        />
+        {isSearching ? (
+          <div className="mb-4">
+            <h2 className="text-lg font-medium text-gray-700 mb-3">Search Results</h2>
+            {searchResults.length > 0 ? (
+              renderItems(searchResults)
+            ) : (
+              <p className="text-gray-500 text-sm">No items found matching your search</p>
+            )}
+          </div>
+        ) : (
+          /* Root level items */
+          <FolderList
+            parentId={null}
+            items={items}
+            onEdit={handleEdit}
+            renderItems={renderItems}
+            onAddItem={handleAddItem}
+          />
+        )}
       </div>
     </main>
   );
