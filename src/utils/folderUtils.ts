@@ -11,7 +11,7 @@ export const wouldCreateLoop = (items: Item[], folderId: string, newParentId: st
   }
 
   // Check if any parent of newParentId is folderId (would create a loop)
-  let currentParentId = newParentId;
+  let currentParentId: string | null = newParentId;
   const visitedIds = new Set<string>();
 
   while (currentParentId) {
@@ -53,7 +53,7 @@ export const getAllChildIds = (items: Item[], folderId: string): string[] => {
 
 // Get all folders for dropdown selection, properly indented
 export const getFolderOptions = (items: Item[], currentFolderId?: string): { value: string | null, label: string }[] => {
-  const options = [{ value: null, label: 'Root' }];
+  const options: { value: string | null; label: string }[] = [{ value: null, label: 'Root' }];
   
   const folders = items.filter(item => item.type === 'folder' && item.id !== currentFolderId) as Folder[];
   

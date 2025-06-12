@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExternalLink, Edit, Trash, Globe } from 'lucide-react';
+import { ExternalLink, Edit, Trash } from 'lucide-react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { Link } from '../../types';
@@ -24,27 +24,16 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit }) => {
     setIsDeleteDialogOpen(false);
   };
 
-  // Function to get favicon URL
-  const getFaviconUrl = (url: string) => {
-    try {
-      const urlObj = new URL(url);
-      return `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=64`;
-    } catch (e) {
-      return null;
-    }
-  };
-
   // Extract domain from URL for display
   const getDomainFromUrl = (url: string) => {
     try {
       const urlObj = new URL(url);
       return urlObj.hostname;
-    } catch (e) {
+    } catch {
       return url;
     }
   };
 
-  const faviconUrl = getFaviconUrl(link.url);
   const domain = getDomainFromUrl(link.url);
 
   return (

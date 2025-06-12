@@ -1,15 +1,15 @@
 import React, { createContext, useContext, ReactNode, useState } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useStorage } from '../hooks/useStorage';
 import { useClipboard } from '../hooks/useClipboard';
-import { Item, ItemType } from '../types';
+import { Item } from '../types';
 import { getFolderOptions } from '../utils/folderUtils';
 
 interface ShortcutsContextType {
   items: Item[];
-  addItem: ReturnType<typeof useLocalStorage>['addItem'];
-  updateItem: ReturnType<typeof useLocalStorage>['updateItem'];
-  deleteItem: ReturnType<typeof useLocalStorage>['deleteItem'];
-  toggleFolder: ReturnType<typeof useLocalStorage>['toggleFolder'];
+  addItem: ReturnType<typeof useStorage>['addItem'];
+  updateItem: ReturnType<typeof useStorage>['updateItem'];
+  deleteItem: ReturnType<typeof useStorage>['deleteItem'];
+  toggleFolder: ReturnType<typeof useStorage>['toggleFolder'];
   copyToClipboard: ReturnType<typeof useClipboard>['copyToClipboard'];
   hasCopied: boolean;
   copiedItemId: string | null;
@@ -19,12 +19,14 @@ interface ShortcutsContextType {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   searchResults: Item[];
   isSearching: boolean;
+  needsFile: boolean;
+  pickFile: () => Promise<void>;
 }
 
 const ShortcutsContext = createContext<ShortcutsContextType | undefined>(undefined);
 
 export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { items, addItem, updateItem, deleteItem, toggleFolder, importItems: importToStorage } = useLocalStorage();
+  const { items, addItem, updateItem, deleteItem, toggleFolder, importItems: importToStorage, needsFile, pickFile } = useStorage();
   const { hasCopied, itemId: copiedItemId, copyToClipboard } = useClipboard();
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -62,6 +64,8 @@ export const ShortcutsProvider: React.FC<{ children: ReactNode }> = ({ children 
         setSearchTerm,
         searchResults,
         isSearching,
+        needsFile,
+        pickFile,
       }}
     >
       {children}
@@ -76,3 +80,4 @@ export const useShortcuts = () => {
   }
   return context;
 };
+

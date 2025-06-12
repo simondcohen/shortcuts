@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Code, Copy, Check, Edit, Trash, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { Copy, Check, Edit, Trash, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { Snippet } from '../../types';
