@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import Button from '../common/Button';
 import { Item } from '../../types';
 
@@ -64,7 +64,7 @@ Tip: Items can appear in any order - the importer resolves parent-child relation
       await navigator.clipboard.writeText(formatInstructions);
       setHasCopied(true);
       setTimeout(() => setHasCopied(false), 2000);
-    } catch (err) {
+    } catch {
       setError('Failed to copy instructions');
     }
   };
@@ -105,7 +105,7 @@ Tip: Items can appear in any order - the importer resolves parent-child relation
     try {
       const text = await navigator.clipboard.readText();
       setJsonInput(text);
-    } catch (err) {
+    } catch {
       setError('Failed to read from clipboard');
     }
   };

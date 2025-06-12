@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Folder as FolderIcon, Edit, Trash, Plus } from 'lucide-react';
-import Button from '../common/Button';
 import { Folder, ItemType } from '../../types';
 import { useShortcuts } from '../../context/ShortcutsContext';
 import ConfirmDialog from '../common/ConfirmDialog';

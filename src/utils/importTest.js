@@ -22,7 +22,7 @@ const testImport = () => {
   };
   
   // This should be available from the useShortcuts hook
-  const { importItems } = window.__SHORTCUTS_DEBUG__.hooks.useLocalStorage();
+  const { importItems } = window.__SHORTCUTS_DEBUG__.hooks.useStorage();
   const result = importItems([testFolder, testChild]);
   
   console.log("Import result:", result);

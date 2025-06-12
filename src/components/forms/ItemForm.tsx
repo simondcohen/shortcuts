@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useShortcuts } from '../../context/ShortcutsContext';
 import Button from '../common/Button';
-import { Item, ItemType } from '../../types';
-import { Link, ExternalLink, Code, Folder } from 'lucide-react';
+import { Item, ItemType, Link as LinkItem, Snippet, Folder as FolderItem } from '../../types';
+import { ExternalLink, Code, Folder as FolderIcon } from 'lucide-react';
 
 interface ItemFormProps {
   type: ItemType;
@@ -75,7 +75,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
       if (editItem) {
         updateItem(editItem.id, itemData);
       } else {
-        addItem(itemData as any);
+        addItem(itemData as Omit<LinkItem | Snippet | FolderItem, 'id' | 'createdAt'>);
       }
       
       onClose();
@@ -95,7 +95,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ type, onClose, editItem, parentId: 
       case 'snippet':
         return <Code className="h-5 w-5" />;
       case 'folder':
-        return <Folder className="h-5 w-5" />;
+        return <FolderIcon className="h-5 w-5" />;
       default:
         return null;
     }
