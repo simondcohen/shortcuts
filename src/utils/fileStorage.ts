@@ -8,7 +8,7 @@ type FileSystemHandlePermissionDescriptor = {
 const HANDLE_KEY = 'data-file-handle';
 
 export const isFileSystemSupported = (): boolean => {
-  return typeof window !== 'undefined' && 'showOpenFilePicker' in window;
+  return typeof window !== 'undefined' && 'showSaveFilePicker' in window;
 };
 
 export const getStoredHandle = async (): Promise<FileSystemFileHandle | undefined> => {
@@ -22,13 +22,25 @@ export const storeHandle = async (handle: FileSystemFileHandle): Promise<void> =
 export const pickFile = async (): Promise<FileSystemFileHandle | null> => {
   try {
     const win = window as Window & {
-      showOpenFilePicker?: (options?: { types?: unknown[]; excludeAcceptAllOption?: boolean; multiple?: boolean }) => Promise<FileSystemFileHandle[]>;
+      showSaveFilePicker?: (options?: { 
+        types?: Array<{
+          description?: string;
+          accept?: Record<string, string[]>;
+        }>; 
+        excludeAcceptAllOption?: boolean;
+        suggestedName?: string;
+      }) => Promise<FileSystemFileHandle>;
     };
-    const [handle] = await win.showOpenFilePicker!({
-      types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
+    
+    const handle = await win.showSaveFilePicker!({
+      types: [{ 
+        description: 'JSON Files', 
+        accept: { 'application/json': ['.json'] } 
+      }],
       excludeAcceptAllOption: false,
-      multiple: false,
+      suggestedName: 'shortcuts-data.json'
     });
+    
     return handle;
   } catch (err) {
     console.error('File selection cancelled or failed', err);
